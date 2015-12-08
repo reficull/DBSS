@@ -1,3 +1,9 @@
+.*
+
+#dir
+build/
+.svn/
+
 # Compiled Object files
 *.slo
 *.lo
