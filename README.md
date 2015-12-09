@@ -28,8 +28,11 @@ the lib file located in build/release/lib/libDBSS.so, you should copy or to link
 * in DB.lua make sure the libSSDB.so path is correct
 
 default is 
+
         ssdb = assert(ffi.load(LUA_SCRIPT_ROOT .. 'build/release/lib/libDBSS.so'),"load libDBSS.so failed")    
+
 if copy to /usr/local/lib then
+
         ssdb = assert(ffi.load("/usr/local/lib/libDBSS.so"),"load libDBSS failed")    
 
 #TEST
