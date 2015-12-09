@@ -18,24 +18,26 @@ copy DB.lua to your project
 
 3. in DB.lua make sure the libSSDB.so path is correct
 default is 
-ssdb = assert(ffi.load(LUA_SCRIPT_ROOT .. 'build/release/lib/libDBSS.so'),"load libDBSS.so failed")    
+        ssdb = assert(ffi.load(LUA_SCRIPT_ROOT .. 'build/release/lib/libDBSS.so'),"load libDBSS.so failed")    
 if copy to /usr/local/lib then
-ssdb = assert(ffi.load("/usr/local/lib/libDBSS.so"),"load libDBSS failed")    
+        ssdb = assert(ffi.load("/usr/local/lib/libDBSS.so"),"load libDBSS failed")    
 
 #USAGE
 edit config.lua set ssdb server ip and port,default is local host and 8888
 
 then in your lua file:
 
-DB = require("DB").DB
+        DB = require("DB").DB
 
 it would connect ssdb,and you r good to go
 
 #EXAMPLE
-DB = require("DB").DB
 
-DB:set("key","value")
-local ret = DB:get("key")
+        DB = require("DB").DB
+
+        DB:set("key","value")
+
+        local ret = DB:get("key")
 
 more usage please
 see luatest.lua and DB.lua
