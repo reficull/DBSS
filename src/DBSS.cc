@@ -9,8 +9,8 @@
 #include <map>
 #include <assert.h>
 #include "SSDB_impl.h"
-#include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+//#include <boost/noncopyable.hpp>
+//#include <boost/shared_ptr.hpp>
 
 #define DBSS_VERSION_MAJOR 1 
 #define DBSS_VERSION_MINOR 0 
@@ -35,7 +35,8 @@ do {                                \
     *p = aszero_ ## p;              \
 } while (0)
 */
-class DBSS : boost::noncopyable{
+//class DBSS : boost::noncopyable{
+class DBSS {
     public:
         ssdb::ClientImpl client; 
         ssdb::Status s;
