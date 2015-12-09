@@ -10,21 +10,33 @@ then
 
 
 1. BUILD
-run
+
+* run
+
 ./build.sh
-will make build dir in current dir
+
+ will make build dir in current dir
 
 
-2. COPY lib file and DB.lua to your project2. 
+* copy lib file and DB.lua to your project 
+
 the lib file located in build/release/lib/libDBSS.so, you should copy or to link it to your /usr/local/lib/ or any other proper directory
-copy DB.lua to your project
+
+* copy DB.lua to your project
 
 
-3. in DB.lua make sure the libSSDB.so path is correct
+* in DB.lua make sure the libSSDB.so path is correct
+
 default is 
         ssdb = assert(ffi.load(LUA_SCRIPT_ROOT .. 'build/release/lib/libDBSS.so'),"load libDBSS.so failed")    
 if copy to /usr/local/lib then
         ssdb = assert(ffi.load("/usr/local/lib/libDBSS.so"),"load libDBSS failed")    
+
+#TEST
+
+make sure you have luajit
+
+        luajit luatest.lua
 
 #USAGE
 edit config.lua set ssdb server ip and port,default is local host and 8888
