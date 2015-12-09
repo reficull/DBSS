@@ -7,14 +7,18 @@ DB.lua is a ffi wrapper for DBSS.cc
 #INSTALL
 first make sure you have cmake
 then
+
+
 1. BUILD
 run
 ./build.sh
 will make build dir in current dir
 
+
 2. COPY lib file and DB.lua to your project2. 
 the lib file located in build/release/lib/libDBSS.so, you should copy or to link it to your /usr/local/lib/ or any other proper directory
 copy DB.lua to your project
+
 
 3. in DB.lua make sure the libSSDB.so path is correct
 default is 
