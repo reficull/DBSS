@@ -7,7 +7,8 @@ local random   = helper.random
 local shuffle  = helper.C_random_shuffle
 local C        = ffi.C
 LUA_SCRIPT_ROOT = basepath()
-ssdb = assert(ffi.load(LUA_SCRIPT_ROOT .. 'build/release/lib/libDBSS.so'),"load libDBSS.so failed")
+ssdb = assert(ffi.load("/usr/local/lib/libDBSS.so"),"load libDBSS failed")
+--ssdb = assert(ffi.load(LUA_SCRIPT_ROOT .. 'build/release/lib/libDBSS.so'),"load libDBSS.so failed")
 ffi.cdef[[
     typedef struct {
         char const** ptr;

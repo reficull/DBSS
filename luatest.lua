@@ -1,5 +1,4 @@
 DB = require("DB").DB
-local DBSS = require("DB")
 printT = require("Util").PrintTable
 local ffi      = require 'ffi'
 local NULL = ffi.new'void*'
