@@ -22,8 +22,7 @@ then
 
 the lib file located in build/release/lib/libDBSS.so, you should copy or to link it to your /usr/local/lib/ or any other proper directory
 
-* copy DB.lua to your project
-
+* copy DB.lua config.lua helper.lua to your project, the later two is not require,you can easily edit DB.lua to get rid of them or use your project file to feed DB.lua
 
 * in DB.lua make sure the libSSDB.so path is correct
 
@@ -34,6 +33,8 @@ default is
 if copy to /usr/local/lib then
 
         ssdb = assert(ffi.load("/usr/local/lib/libDBSS.so"),"load libDBSS failed")    
+
+* edit last line of DB.lua, make sure the ip and port is correct        
 
 #TEST
 
