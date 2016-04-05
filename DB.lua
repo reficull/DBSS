@@ -7,8 +7,8 @@ local random   = helper.random
 local shuffle  = helper.C_random_shuffle
 local C        = ffi.C
 LUA_SCRIPT_ROOT = basepath()
-ssdb = assert(ffi.load("/usr/local/lib/libDBSS.so"),"load libDBSS failed")
---ssdb = assert(ffi.load(LUA_SCRIPT_ROOT .. 'build/release/lib/libDBSS.so'),"load libDBSS.so failed")
+--ssdb = assert(ffi.load("/usr/local/lib/libDBSS.so"),"load libDBSS failed")
+ssdb = assert(ffi.load(LUA_SCRIPT_ROOT .. 'build/release/lib/libDBSS.so'),"load libDBSS.so failed")
 ffi.cdef[[
     typedef struct {
         char const** ptr;
@@ -45,6 +45,7 @@ ffi.cdef[[
     int DBSS_hsize(DBSS *this_,char const *name, int64_t *ret);
 	int DBSS_hclear(DBSS *this_,char const *name, int64_t *ret);
 	int DBSS_hkeys(DBSS *this_,vec_t *vec,char const *name,uint64_t limit,uint64_t vlen, char const *key_start, char const *key_end);
+    int DBSS_hgetall(DBSS *this_,vec_t *vec,char const *name);
 	int DBSS_hscan(DBSS *this_,vec_t *vec,char const *name,uint64_t limit,uint64_t vlen, char const *key_start, char const *key_end );
 	int DBSS_hrscan(DBSS *this_,vec_t *vec,char const *name,uint64_t limit,uint64_t vlen, char const *key_start, char const *key_end );
 	int DBSS_multi_hget(DBSS *this_,vec_t *ret,char const *name,char const **keys,uint64_t size,uint64_t vlen);
@@ -92,7 +93,6 @@ mt.__index = mt
 function mt.get_pointer()
     local ptr = ffi.new("double**")
     ptr = ssdb.get_pointer()
-    print(ptr)
     local size_a = 10
     for i=0,size_a-1 do
         for j=0,size_a-1 do
@@ -285,7 +285,6 @@ end
 function mt.multi_set(self,kvs)
     local tb = {}
     for k,v in pairs(kvs) do
-        print('kvs:',k,v)
         table.insert(tb,k)
         table.insert(tb,v.."")
     end
@@ -344,7 +343,6 @@ function mt.hincr(self,name,key,num)
     local numb = ffi.new("int64_t",num)
     local r = ffi.new(aint64_t)
     local res = ssdb.DBSS_hincr(self.super,n,k,numb,r)
-    print('hincr res:',res)
     return tonumber(r[0])
 end
 
@@ -391,6 +389,25 @@ function mt.hkeys(self,name,start,endd,limit,vlen)
     local k
     for i=0,count-1 do
         k = table.insert(tb,ffi.string(vec.ptr[i]))
+    end
+    return tb
+end
+
+function mt.hgetall(self,name)
+    if not name then
+        print("name can not be empty\n")
+        return
+    end
+    local n = ffi.cast("char*",name)
+    local v = ffi.typeof("vec_t")
+    local vec = v()
+    local v_ptr = ffi.cast("vec_t*",vec)
+    local tb = {}
+    ssdb.DBSS_hgetall(self.super,v_ptr,n)
+    local count = tonumber(vec.count)
+    local k
+    for i=0,count-1,2 do
+        tb[ffi.string(vec.ptr[i])] = ffi.string(vec.ptr[i+1])
     end
     return tb
 end
@@ -498,7 +515,6 @@ function mt.multi_hset(self,name,kvs)
     local n = ffi.cast("char*",name)
     local tb = {}
     for k,v in pairs(kvs) do
-        print('kvs:',k,v)
         table.insert(tb,k)
         table.insert(tb,v.."")
     end
@@ -646,7 +662,6 @@ function mt.zkeys(self,name,key_start,score_start,score_end,limit,vlen)
     local tb = {}
     local ret = ssdb.DBSS_zkeys(self.super,n,v_ptr,ks,ss,se,l,len) 
     local count = tonumber(vec.count)
-    print("zkeysret:",count)
     for i=0,count-1 do
         table.insert(tb,ffi.string(vec.ptr[i]))
     end
@@ -675,7 +690,6 @@ function mt.zscan(self,name,key_start,score_start,score_end,limit,vlen)
     local tb = {}
     local ret = ssdb.DBSS_zscan(self.super,n,v_ptr,ks,ss,se,l,len) 
     local count = tonumber(vec.count)
-    print("zscanret:",count)
     for i=0,count-1 do
         table.insert(tb,ffi.string(vec.ptr[i]))
     end
@@ -702,7 +716,6 @@ function mt.zrscan(self,name,key_start,score_start,score_end,limit,vlen)
     local tb = {}
     local ret = ssdb.DBSS_zrscan(self.super,n,v_ptr,ks,ss,se,l,len) 
     local count = tonumber(vec.count)
-    print("zscanret:",count)
     for i=0,count-1 do
         table.insert(tb,ffi.string(vec.ptr[i]))
     end

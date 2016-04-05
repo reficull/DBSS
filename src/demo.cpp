@@ -151,8 +151,8 @@ int main(int argc, char **argv){
 				printf("%s, ", list[i].c_str());
 			}
 		}
-		printf("\n");
 		
+        printf("\n ============hrscan:\n");
 		list.clear();
 		s = client.hrscan(hash, "", "", 2, &list);
 		assert(s.ok() && list.size() <= 4);
@@ -163,8 +163,8 @@ int main(int argc, char **argv){
 				printf("%s, ", list[i].c_str());
 			}
 		}
-		printf("\n");
 
+        printf("\n ============multi_hset:\n");
 		std::map<std::string, std::string> kvs;
 		kvs.insert(std::make_pair("k1", "v1"));
 		kvs.insert(std::make_pair("k2", "v2"));
@@ -175,6 +175,7 @@ int main(int argc, char **argv){
 		std::vector<std::string> keys;
 		keys.push_back("k1");
 		keys.push_back("k2");
+        printf("\n ============multi_hget:\n");
 		s = client.multi_hget(hash, keys, &list);
 		assert(s.ok());
 		for(int i=0; i<list.size(); i++){
@@ -184,6 +185,18 @@ int main(int argc, char **argv){
 				printf("%s, ", list[i].c_str());
 			}
 		}
+        printf("\n ============hgetall:\n");
+        list.clear();
+        s = client.hgetall(hash,&list);
+		for(int i=0; i<list.size(); i++){
+			if(i%2 == 0){
+				printf("%s=", list[i].c_str());
+			}else{
+				printf("%s, ", list[i].c_str());
+			}
+		}
+
+        printf("\n ============hdel:\n");
 		s = client.multi_hdel(hash, keys);
 		assert(s.ok());
 		printf("\n");
@@ -198,45 +211,56 @@ int main(int argc, char **argv){
 		std::vector<std::string> list;
 		int64_t test_score = 100;
 		int64_t score;
+        printf("\n ============zset:\n");
 		s = client.zset(zset, key, test_score);
 		assert(s.ok());
 
+        printf("\n ============zget:\n");
 		s = client.zget(zset, key, &score);
 		assert(s.ok() && (score == test_score));
 		printf("%s = %d\n", key.c_str(), (int)score);
 
+        printf("\n ============zdel:\n");
 		s = client.zdel(zset, key);
 		assert(s.ok());
 
+        printf("\n ============zget:\n");
 		s = client.zget(zset, key, &score);
 		assert(s.not_found());
 		
 		int64_t ret;
 		ret = -1;
+        printf("\n ============zsize:\n");
 		s = client.zsize(zset, &ret);
 		assert(s.ok() && (ret != -1));
+        printf("\n ============zincr:\n");
 		s = client.zincr(zset, key, 3, &ret);
 		assert(s.ok() && (ret == 3));
 		s = client.zincr(zset, key, -1, &ret);
 		assert(s.ok() && (ret == 2));
 		
+        printf("\n ============zset:\n");
 		client.zset(zset, "a", -1);
 		client.zset(zset, "b", 3);
 		client.zset(zset, "c", 4);
 		int64_t score_max = 90;
 	
 		list.clear();
+        printf("\n ============zkeys:\n");
 		s = client.zkeys(zset, "", NULL, &score_max, 2, &list);
 		assert(s.ok() && list.size() <= 2);
 	
 		list.clear();
+        printf("\n ============zrange:\n");
 		s = client.zrange(zset, 0, 2, &list);
 		assert(s.ok() && list.size() <= 4);
 		list.clear();
+        printf("\n ============zrrange:\n");
 		s = client.zrrange(zset, 0, 2, &list);
 		assert(s.ok() && list.size() <= 4);
 	
 		list.clear();
+        printf("\n ============zscan:\n");
 		s = client.zscan(zset, "", NULL, &score_max, 2, &list);
 		assert(s.ok() && list.size() <= 4);
 		for(int i=0; i<list.size(); i++){
@@ -246,9 +270,9 @@ int main(int argc, char **argv){
 				printf("%s, ", list[i].c_str());
 			}
 		}
-		printf("\n");
 		
 		list.clear();
+        printf("\n ============zrscan:\n");
 		s = client.zrscan(zset, "", &score_max, NULL, 2, &list);
 		assert(s.ok() && list.size() <= 4);
 		for(int i=0; i<list.size(); i++){
@@ -258,8 +282,8 @@ int main(int argc, char **argv){
 				printf("%s, ", list[i].c_str());
 			}
 		}
-		printf("\n");
 
+        printf("\n ============multi_zset:\n");
 		std::map<std::string, int64_t> kss;
 		kss.insert(std::make_pair("k1", 123));
 		kss.insert(std::make_pair("k2", 124));
@@ -270,6 +294,7 @@ int main(int argc, char **argv){
 		std::vector<std::string> keys;
 		keys.push_back("k1");
 		keys.push_back("k2");
+        printf("\n ============multi_zget:\n");
 		s = client.multi_zget(zset, keys, &list);
 		assert(s.ok());
 		for(int i=0; i<list.size(); i++){
@@ -279,6 +304,7 @@ int main(int argc, char **argv){
 				printf("%s, ", list[i].c_str());
 			}
 		}
+        printf("\n ============multi_zdel:\n");
 		s = client.multi_zdel(zset, keys);
 		assert(s.ok());
 		printf("\n");
@@ -290,6 +316,7 @@ int main(int argc, char **argv){
 		assert(s.ok() && (rank != -1));
 
 		ret = -1;
+        printf("\n ============multi_zclear:\n");
 		s = client.zclear(zset, &ret);
 		assert(s.ok() && ret != -1);
 	}

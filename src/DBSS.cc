@@ -91,7 +91,7 @@ class DBSS {
             {
                 val[v.size() + 1] = 0;
                 strcpy(val,v.c_str());
-                printf("get key:%s = %s\n",key,val);
+                //printf("get key:%s = %s\n",key,val);
             }
             else if(s.not_found())
             {
@@ -128,7 +128,7 @@ class DBSS {
         int del(char const* key){
             s = client.del(std::string(key));
             if(s.ok()){
-                printf("del ok\n");
+                //printf("del ok\n");
             }else{
                 printf("del failed\n");
             }
@@ -221,7 +221,7 @@ class DBSS {
             std::vector<std::string> v;
             for(uint64_t i = 0; i < size; ++i){
                 if(!keys[i]) break;
-                printf("del key add:%s\n",keys[i]);
+                //printf("del key add:%s\n",keys[i]);
                 v.push_back(std::string(keys[i]));
             }
             s = client.multi_del(v); 
@@ -232,7 +232,7 @@ class DBSS {
             std::string *tstr = &tmp;
             
             s = client.hget(std::string(name),std::string(key),tstr);
-            printf("cpp hget:%s\n",tmp.c_str());
+            //printf("cpp hget:%s\n",tmp.c_str());
             strcpy(val,tmp.c_str());
             return s.ok();
         }
@@ -277,6 +277,27 @@ class DBSS {
             }
             return s.ok();
         }
+        int hgetall(vec_t *vec,char const *name){
+            std::vector<std::string> v;
+            try{
+                uint64_t i=0;
+                s = client.hgetall(std::string(name),&v);
+                vec->ptr = static_cast<char const**>(malloc(v.size() * 1000));
+                for(std::vector<std::string>::iterator it=v.begin();it!=v.end();++it){
+                    char const *tmp = (*it).c_str();
+                    char *cs = new char[strlen(tmp)];
+                    strcpy(cs,tmp);
+                    vec->ptr[i] = cs;
+                    i++;
+                }
+                vec->count = i;
+            }catch (std::exception& e){
+                std::cout << "error:" << e.what() << std::endl;
+                vec->count = 0;
+            }
+            return s.ok();
+        }
+
 	    int hscan(vec_t *vec,char const *name,uint64_t limit ,uint64_t vlen, char const *key_start, char const *key_end){
             std::vector<std::string> v;
             try{
@@ -350,10 +371,8 @@ class DBSS {
 
 	    int multi_hdel(char const *name, char const **keys,uint64_t size){
             std::vector<std::string> v;
-            printf("del size:%lu\n",size);
             for(uint64_t i = 0; i < size; ++i){
                 if(!keys[i]) break;
-                printf("del key add:%s\n",keys[i]);
                 v.push_back(std::string(keys[i]));
             }
             s = client.multi_hdel(std::string(name),v); 
@@ -446,7 +465,6 @@ class DBSS {
                 for(std::vector<std::string>::iterator it=v.begin();it!=v.end();++it){
                     char *cs = new char[vlen];
                     strcpy(cs,(*it).c_str());
-                    printf("zkey:%s\n",cs);
                     ret->ptr[i] = cs;
                     i++;
                 }
@@ -469,7 +487,6 @@ class DBSS {
                 for(std::vector<std::string>::iterator it=v.begin();it!=v.end();++it){
                     char *cs = new char[vlen];
                     strcpy(cs,(*it).c_str());
-                    printf("zkey:%s\n",cs);
                     ret->ptr[i] = cs;
                     i++;
                 }
@@ -492,7 +509,6 @@ class DBSS {
                 for(std::vector<std::string>::iterator it=v.begin();it!=v.end();++it){
                     char *cs = new char[vlen];
                     strcpy(cs,(*it).c_str());
-                    printf("zrscan:%s\n",cs);
                     ret->ptr[i] = cs;
                     i++;
                 }
@@ -602,7 +618,6 @@ extern "C" {
     }
 
     int DBSS_get(DBSS *this_,char* key,void* v){
-        printf("get key in DBSS.cc C:%s\n",key);
         char val[255] = "";
         this_->s.ok();
         this_->get(key,val);
@@ -665,7 +680,7 @@ extern "C" {
 	int DBSS_multi_get(DBSS *this_,vec_t *ret,char const **keys,uint64_t size,uint64_t vlen){
         for(int i = 0;i<size;++i)
         {
-            printf("multi get key:%s\n",keys[i]);
+            //printf("multi get key:%s\n",keys[i]);
         }
         return this_->multi_get(ret,keys,size,vlen); 
     }
@@ -706,6 +721,10 @@ extern "C" {
         return  this_->hkeys(vec,name,limit,vlen,key_start,key_end);
     }
 
+    int DBSS_hgetall(DBSS *this_,vec_t *vec, char const *name){
+        return this_->hgetall(vec,name);
+    }
+
 	int DBSS_hscan(DBSS *this_,vec_t *vec,char const *name,uint64_t limit,uint64_t vlen, char const *key_start, char const *key_end ){
         return this_->hscan(vec,name,limit,vlen,key_start,key_end);
     }
@@ -717,7 +736,7 @@ extern "C" {
 	int DBSS_multi_hget(DBSS *this_,vec_t *ret,char const *name,char const **keys,uint64_t size,uint64_t vlen){
         for(int i = 0;i<size;++i)
         {
-            printf("multi get key:%s\n",keys[i]);
+           // printf("multi get key:%s\n",keys[i]);
         }
         return this_->multi_hget(ret,name,keys,size,vlen); 
     }

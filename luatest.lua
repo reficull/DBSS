@@ -83,6 +83,7 @@ ret = DB:hsize("testhash")
 print("hsize:",ret)
 --ret = DB:hclear("testhash")
 --print("hclear:",ret)
+]]--
 --ret = DB:hkeys("testhash","","",10,128)
 local keys = {
     hkey1 = "hval1",
@@ -91,6 +92,9 @@ local keys = {
 }
 local ret = DB:multi_hset("testhash",keys)
 print('multi_hset:',ret)
+local ret1 = DB:hgetall("testhash")
+printT(ret1)
+--[[
 ret = DB:hscan("testhash","","",10,128)
 printT(ret)
 ret = DB:hrscan("testhash","k","",10,128)
@@ -109,7 +113,6 @@ print('hscan after del:')
 ret = DB:hscan("testhash","","",10,128)
 printT(ret)
 
-]]--
 DB:zset("testzset","key1",187)
 DB:zset("testzset","key2",7)
 DB:zset("testzset","key3",87)
@@ -156,3 +159,4 @@ printT(rstb)
 print("qpush:",DB:qpush("qtest",'234987987987wtf'))
 local v = DB:qpop("qtest")
 print("qpop:",v)
+]]--
